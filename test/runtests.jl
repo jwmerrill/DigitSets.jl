@@ -38,6 +38,37 @@ const b = DigitSet(2, 5)
 @test symdiff(a, DigitSet()) == a
 @test symdiff(DigitSet(), a) == a
 
+@test issubset(a, a)
+@test a ⊆ a
+@test issubset(b, b)
+@test b ⊆ b
+@test !issubset(a, b)
+@test a ⊈ b
+@test !issubset(b, a)
+@test b ⊈ a
+@test issubset(DigitSet(), a)
+@test DigitSet() ⊆ a
+@test issubset(DigitSet(), b)
+@test DigitSet() ⊆ b
+@test issubset(DigitSet(), DigitSet())
+@test DigitSet() ⊆ DigitSet()
+@test !issubset(a, DigitSet())
+@test a ⊈ DigitSet()
+@test !issubset(b, DigitSet())
+@test b ⊈ DigitSet()
+@test issubset(DigitSet(1), a)
+@test DigitSet(1) ⊆ a
+@test issubset(DigitSet(1, 2), a)
+@test DigitSet(1, 2) ⊆ a
+@test issubset(DigitSet(5), b)
+@test DigitSet(5) ⊆ b
+@test !(a < a)
+@test !(a ⊊ a)
+@test !(a < b)
+@test !(a ⊊ b)
+@test DigitSet(1, 2) < a
+@test DigitSet(1, 2) ⊊ a
+
 @test (@sprintf "%s" a) == "DigitSet(1,2,7)"
 @test (@sprintf "%s" DigitSet()) == "DigitSet()"
 

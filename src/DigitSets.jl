@@ -1,4 +1,7 @@
 module DigitSets
+
+    import Base: <, <=, ⊊, ⊈
+
     # RawDigitSet is used as an indirection mechanism to allow us to
     # construct a DigitSet from a single integer, while still making
     # it possible to also create a DigitSet from an unwrapped Int16
@@ -86,6 +89,13 @@ module DigitSets
             a = symdiff(a, b)
         end
     end
+
+    # Ordering and subset relationships
+    Base.issubset(a::DigitSet, b::DigitSet) = isempty(setdiff(a, b))
+    <(a::DigitSet, b::DigitSet) = (length(a) < length(b)) && (a <= b)
+    <=(a::DigitSet, b::DigitSet) = issubset(a, b)
+    ⊊(a::DigitSet, b::DigitSet) = <(a, b)
+    ⊈(a::DigitSet, b::DigitSet) = !⊆(a, b)
 
     export DigitSet
 
