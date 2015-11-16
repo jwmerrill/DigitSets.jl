@@ -3,39 +3,37 @@ module DigitSets
 
     import Base: <, <=, ⊊, ⊈
 
-    # RawDigitSet is used as an indirection mechanism to allow us to
-    # construct a DigitSet from a single integer, while still making
-    # it possible to also create a DigitSet from an unwrapped Int16
-    # bitmask. It is not intended to be used by outside callers.
-    immutable RawDigitSet
-        d::Int16
+    # Bitmask is used as an indirection mechanism to allow us to
+    # construct a e.g. a DigitSet containing the single digit "3"
+    # as DigitSet(3), while also providing a way to construct
+    # a DigitSet directly from the binary representation of an
+    # integer.
+    immutable Bitmask{T<:Integer}
+        data::T
     end
 
     immutable DigitSet
-        d::Int16
-
-        DigitSet(rds::RawDigitSet) = new(rds.d)
+        d::UInt16
+        DigitSet(b::Bitmask) = new(b.data)
     end
-
-    # Intentionally not exported, but you can use it as
-    # DigitSets.fromBitmask(Int16(100))
-    fromBitmask(d::Int16) = DigitSet(RawDigitSet(d))
 
     # Not strictly necessary, but I'd like to keep the logic for single
     # element set construction as simple as possible.
     function DigitSet(n::Integer)
-        d = Int16(0) | Int16(1 << (n - 1))
-        fromBitmask(d)
+        d = UInt16(0) | UInt16(1 << (n - 1))
+        DigitSet(Bitmask(d))
     end
 
+    DigitSet() = DigitSet(Bitmask(0))
+
     function DigitSet(itr)
-        d = Int16(0)
+        d = UInt16(0)
         # For each digit in a, set the corresponding
         # bit in d to 1.
         for n in itr
-            d |= Int16(1 << (n - 1))
+            d |= UInt16(1 << (n - 1))
         end
-        fromBitmask(d)
+        DigitSet(Bitmask(d))
     end
 
     function DigitSet(ns::Integer...)
@@ -55,6 +53,7 @@ module DigitSets
     Base.length(ds::DigitSet) = count_ones(ds.d)
     Base.in(n, ds::DigitSet) = (ds.d & (1 << (n - 1))) != 0
     Base.isempty(ds::DigitSet) = ds.d == 0
+    Base.eltype(::Type{DigitSet}) = Int
 
     function Base.show(io::IO, ds::DigitSet)
       print(io, "DigitSet")
@@ -64,10 +63,10 @@ module DigitSets
     end
 
     # Set operations
-    Base.union(a::DigitSet, b::DigitSet) = fromBitmask(a.d | b.d)
-    Base.intersect(a::DigitSet, b::DigitSet) = fromBitmask(a.d & b.d)
-    Base.symdiff(a::DigitSet, b::DigitSet) = fromBitmask(a.d $ b.d)
-    Base.setdiff(a::DigitSet, b::DigitSet) = fromBitmask(a.d & (~b.d))
+    Base.union(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d | b.d))
+    Base.intersect(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d & b.d))
+    Base.symdiff(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d $ b.d))
+    Base.setdiff(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d & (~b.d)))
 
     # Variadic versions of union, intersect, and symdiff. All of these
     # are associative.
