@@ -40,16 +40,20 @@ module DigitSets
         DigitSet(ns)
     end
 
-    # Allow iterating over the members of a digit set
-    Base.start(ds::DigitSet) = (ds.d, 0)
-    function Base.next(ds::DigitSet, state)
-      (d, n) = state
-      shift = 1 + trailing_zeros(d)
-      n += shift
-      d >>= shift
-      return (n, (d, n))
+    function Base.iterate(ds::DigitSet, state=nothing)
+        if state == nothing
+            state = (ds.d, 0)
+        end
+
+        if state[1] <= 0 return nothing end
+
+        (d, n) = state
+        shift = 1 + trailing_zeros(d)
+        n += shift
+        d >>= shift
+        return (n, (d, n))
     end
-    Base.done(ds::DigitSet, state) = state[1] <= 0
+
     Base.length(ds::DigitSet) = count_ones(ds.d)
     Base.in(n, ds::DigitSet) = (ds.d & (1 << (n - 1))) != 0
     Base.isempty(ds::DigitSet) = ds.d == 0
