@@ -1,5 +1,6 @@
 using DigitSets
-using Base.Test
+using Test
+using Printf
 
 const a = DigitSet(1, 2, 7)
 const b = DigitSet(2, 5)
