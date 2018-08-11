@@ -4,15 +4,15 @@ module DigitSets
     import Base: <, <=, ⊊, ⊈
 
     # Bitmask is used as an indirection mechanism to allow us to
-    # construct a e.g. a DigitSet containing the single digit "3"
+    # construct e.g. a DigitSet containing the single digit "3"
     # as DigitSet(3), while also providing a way to construct
     # a DigitSet directly from the binary representation of an
     # integer.
-    immutable Bitmask{T<:Integer}
+    struct Bitmask{T<:Integer}
         data::T
     end
 
-    immutable DigitSet
+    struct DigitSet
         d::UInt16
         DigitSet(b::Bitmask) = new(b.data)
     end
@@ -58,14 +58,14 @@ module DigitSets
     function Base.show(io::IO, ds::DigitSet)
       print(io, "DigitSet")
       print(io, "(")
-      print_joined(io, ds, ",")
+      join(io, ds, ",")
       print(io, ")")
     end
 
     # Set operations
     Base.union(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d | b.d))
     Base.intersect(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d & b.d))
-    Base.symdiff(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d $ b.d))
+    Base.symdiff(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(xor(a.d, b.d)))
     Base.setdiff(a::DigitSet, b::DigitSet) = DigitSet(Bitmask(a.d & (~b.d)))
 
     # Variadic versions of union, intersect, and symdiff. All of these
