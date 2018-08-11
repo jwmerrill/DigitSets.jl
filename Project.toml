@@ -1,7 +1,7 @@
 name = "DigitSets"
 uuid = "2509973d-caa4-53ad-a463-d352067d68b3"
 author = ["Jason Merrill <jason@shapeoperator.com>"]
-version = "0.1.0"
+version = "0.0.0"
 
 [deps]
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
